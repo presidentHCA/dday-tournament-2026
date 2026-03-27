@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D-Day Ice Hockey Tournament 2026 — Résultats en direct</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap');
+:root{
+  --navy:#1a2f4e;--navy2:#2a4a72;--gold:#a0782a;--gold2:#c8963c;
+  --gold-light:#f0d898;--red:#8b1a1a;--cream:#f5f0e4;
+  --parchment:#ede6d6;--parchment2:#e0d8c8;--border:#c8bea8;
+  --text:#1a1a14;--muted:#6a6050;--surfbg:#eaf3ec;--surfborder:#7ab890;
+  --pouleA:#1a3a6e;--pouleB:#7a1a1a;--finale-bg:#fdf6e0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+
+.header{background:linear-gradient(180deg,var(--navy) 0%,var(--navy2) 100%);border-bottom:3px solid var(--gold2);padding:16px 24px;text-align:center;}
+.header h1{font-family:'Oswald',sans-serif;font-size:1.4em;font-weight:700;color:var(--gold-light);letter-spacing:2px;}
+.header .sub{font-size:0.75em;color:rgba(255,255,255,0.55);font-style:italic;margin-top:3px;}
+.live-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);padding:4px 12px;border-radius:20px;margin-top:8px;font-size:0.75em;color:rgba(255,255,255,0.8);}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#4f4;animation:blink 1.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.tabs{display:flex;background:var(--parchment2);border-bottom:2px solid var(--border);overflow-x:auto;justify-content:center;}
+.tab-btn{padding:11px 18px;background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);cursor:pointer;font-family:'Oswald',sans-serif;font-size:0.82em;letter-spacing:1.5px;white-space:nowrap;transition:all .2s;}
+.tab-btn:hover{color:var(--navy);}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--gold2);background:rgba(255,255,255,0.5);}
+.tab-content{display:none;padding:16px 20px;max-width:900px;margin:0 auto;}
+.tab-content.active{display:block;}
+
+.section-day{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:10px 16px;background:var(--navy);border-left:4px solid var(--gold2);border-radius:0 6px 6px 0;}
+.section-day h2{font-family:'Oswald',sans-serif;font-size:1em;font-weight:600;color:var(--gold-light);letter-spacing:2px;}
+.section-day .sub{font-style:italic;color:rgba(255,255,255,0.5);font-size:0.78em;}
+.section-day .tr{margin-left:auto;font-size:0.72em;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.12);padding:3px 10px;border-radius:4px;}
+
+.match-grid{display:flex;flex-direction:column;gap:5px;margin-bottom:6px;}
+.match-card{display:grid;grid-template-columns:90px 1fr;background:#fff;border:1px solid var(--border);border-radius:7px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.match-card.pouleA{border-left:4px solid var(--pouleA);}
+.match-card.pouleB{border-left:4px solid var(--pouleB);}
+.match-card.finale{border-left:4px solid var(--gold2);background:var(--finale-bg);}
+.match-card.played{border-color:var(--border);}
+.match-left{padding:8px 10px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;gap:3px;background:var(--parchment);}
+.match-time{font-family:'Oswald',sans-serif;font-size:0.9em;font-weight:600;color:var(--navy);}
+.match-time-end{font-family:'Oswald',sans-serif;font-size:0.68em;color:var(--muted);}
+.match-badge{font-size:0.58em;font-weight:600;padding:2px 5px;border-radius:3px;text-align:center;color:#fff;font-family:'Oswald',sans-serif;letter-spacing:1px;}
+.badge-a{background:var(--pouleA);}
+.badge-b{background:var(--pouleB);}
+.badge-f{background:var(--gold);color:#fff;}
+.badge-sf{background:var(--red);}
+.match-num{font-size:0.58em;color:var(--muted);}
+.match-right{padding:6px 12px;display:flex;align-items:center;gap:6px;}
+.team-name{flex:1;font-size:0.85em;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.team-name.right{text-align:right;}
+.team-name.winner{color:var(--gold);}
+.score-display{display:flex;align-items:center;gap:4px;}
+.score-val{width:38px;height:34px;background:var(--parchment);border:1.5px solid var(--border);border-radius:5px;color:var(--navy);font-family:'Oswald',sans-serif;font-size:1.2em;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.score-val.winner{border-color:var(--gold2);background:#fdf6e0;color:var(--gold);}
+.score-val.empty{color:var(--muted);font-size:0.9em;}
+.vs{font-family:'Oswald',sans-serif;font-size:0.7em;color:var(--muted);min-width:16px;text-align:center;}
+.surf-card{display:flex;align-items:center;gap:10px;padding:6px 14px;background:var(--surfbg);border:1px solid var(--surfborder);border-radius:5px;margin:4px 0;font-size:0.75em;color:#2a6040;}
+.surf-card .st{font-family:'Oswald',sans-serif;font-size:0.9em;color:#2a6040;font-weight:600;min-width:90px;}
+
+/* STANDINGS */
+.pools-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;}
+.pool-table-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07);}
+.pool-header{padding:10px 14px;font-family:'Oswald',sans-serif;font-size:0.88em;letter-spacing:2px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.pool-header.a{background:var(--pouleA);color:#c8d8f0;}
+.pool-header.b{background:var(--pouleB);color:#f0c8c8;}
+.pool-header .en{font-style:italic;font-size:0.75em;opacity:.7;}
+table{width:100%;border-collapse:collapse;font-size:0.78em;}
+th{background:var(--parchment2);color:var(--muted);padding:5px 7px;text-align:center;font-weight:600;font-size:0.7em;letter-spacing:1px;font-family:'Oswald',sans-serif;}
+th.nc{text-align:left;padding-left:10px;}
+td{padding:6px 7px;border-bottom:1px solid var(--parchment2);text-align:center;color:var(--text);}
+td.nc{text-align:left;padding-left:10px;font-weight:600;}
+tr:last-child td{border-bottom:none;}
+tr.qualified td{background:#fef9ec;}
+tr.qualified td.nc{color:var(--gold);}
+.pn{font-family:'Oswald',sans-serif;font-weight:700;color:var(--muted);}
+tr.qualified .pn{color:var(--gold2);}
+.pv{font-family:'Oswald',sans-serif;font-weight:700;color:var(--navy);}
+.qual-box{margin-top:14px;padding:12px 16px;background:#fef9ec;border:1px solid #d4b870;border-radius:8px;}
+.qual-box h3{font-family:'Oswald',sans-serif;font-size:0.82em;color:var(--gold);letter-spacing:2px;margin-bottom:8px;}
+.qual-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #e8d8a0;font-size:0.8em;}
+.qual-row:last-child{border-bottom:none;}
+.ql{font-family:'Oswald',sans-serif;font-size:0.72em;color:var(--muted);min-width:110px;letter-spacing:1px;}
+.qt{color:var(--text);font-weight:600;}
+
+.last-update{text-align:center;font-size:0.7em;color:var(--muted);margin-top:12px;padding:8px;font-style:italic;}
+
+@media(max-width:600px){
+  .pools-grid{grid-template-columns:1fr;}
+  .match-card{grid-template-columns:76px 1fr;}
+  .team-name{max-width:70px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🏒 D-DAY ICE HOCKEY TOURNAMENT 2026</h1>
+  <div class="sub">Patinoire de Caen la Mer · 5–7 Juin 2026</div>
+  <div><span class="live-badge"><span class="live-dot"></span>EN DIRECT · LIVE</span></div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('samedi',this)">Samedi 6 Juin</button>
+  <button class="tab-btn" onclick="showTab('dimanche',this)">Dimanche 7 Juin</button>
+  <button class="tab-btn" onclick="showTab('classements',this)">📊 Classements</button>
+</div>
+
+<div id="samedi" class="tab-content active">
+  <div class="section-day">
+    <div><h2>SAMEDI 6 JUIN · SATURDAY</h2><div class="sub">Phase de poules · Pool stage</div></div>
+    <div class="tr">13h00–21h10</div>
+  </div>
+  <div class="match-grid" id="pub-samedi"></div>
+</div>
+
+<div id="dimanche" class="tab-content">
+  <div class="section-day">
+    <div><h2>DIMANCHE 7 JUIN · SUNDAY</h2><div class="sub">Phases finales · Finals</div></div>
+    <div class="tr">10h00–15h10</div>
+  </div>
+  <div class="match-grid" id="pub-dimanche"></div>
+</div>
+
+<div id="classements" class="tab-content">
+  <div class="section-day" style="margin-bottom:14px"><div><h2>CLASSEMENTS · STANDINGS</h2></div></div>
+  <div class="pools-grid">
+    <div class="pool-table-wrap">
+      <div class="pool-header a">POULE A &nbsp;<span class="en">Pool A</span></div>
+      <table><thead><tr><th style="width:22px">#</th><th class="nc">Équipe</th><th>J</th><th>V</th><th>D</th><th>BP</th><th>BC</th><th>+/-</th><th>Pts</th></tr></thead><tbody id="pub-tableA"></tbody></table>
+    </div>
+    <div class="pool-table-wrap">
+      <div class="pool-header b">POULE B &nbsp;<span class="en">Pool B</span></div>
+      <table><thead><tr><th style="width:22px">#</th><th class="nc">Équipe</th><th>J</th><th>V</th><th>D</th><th>BP</th><th>BC</th><th>+/-</th><th>Pts</th></tr></thead><tbody id="pub-tableB"></tbody></table>
+    </div>
+  </div>
+  <div class="qual-box">
+    <h3>🎯 PHASES FINALES · FINALS MATCHUPS</h3>
+    <div class="qual-row"><div class="ql">DEMI-FINALE 1</div><div class="qt" id="p-df1">—</div></div>
+    <div class="qual-row"><div class="ql">DEMI-FINALE 2</div><div class="qt" id="p-df2">—</div></div>
+    <div class="qual-row"><div class="ql">CL. 9-10</div><div class="qt" id="p-cl9">—</div></div>
+    <div class="qual-row"><div class="ql">CL. 7-8</div><div class="qt" id="p-cl7">—</div></div>
+    <div class="qual-row"><div class="ql">CL. 5-6</div><div class="qt" id="p-cl5">—</div></div>
+  </div>
+  <div class="last-update" id="lastUpdate"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDAyPkcVUfODaMn1V3K5yJudYikxPR9Z8w",
+  authDomain: "d-day-tournament.firebaseapp.com",
+  databaseURL: "https://d-day-tournament-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "d-day-tournament",
+  storageBucket: "d-day-tournament.firebasestorage.app",
+  messagingSenderId: "157061835226",
+  appId: "1:157061835226:web:2c4126e39b1943b222b8e3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const DEFAULT_A = ["Frères d'Armes","UK Armed Forces","Drakkars de Caen","US Army Team","Les Sentinelles"];
+const DEFAULT_B = ["Bayern Rangers","Warrior for Life","Équipe NATO","Pompiers de Paris","Canadian Forces"];
+let teamA=[...DEFAULT_A], teamB=[...DEFAULT_B];
+let scores = {};
+
+const RR5=[[0,1],[2,3],[0,2],[1,4],[3,4],[0,3],[1,2],[2,4],[0,4],[1,3]];
+
+function buildMatches() {
+  const m=[];
+  const st=[
+    {t:'13:00',e:'13:20'},{t:'13:20',e:'13:40'},{t:'13:40',e:'14:00'},
+    {t:'14:15',e:'14:35'},{t:'14:35',e:'14:55'},{t:'14:55',e:'15:15'},
+    {t:'15:30',e:'15:50'},{t:'15:50',e:'16:10'},{t:'16:10',e:'16:30'},
+    {t:'16:45',e:'17:05'},{t:'17:05',e:'17:25'},{t:'17:25',e:'17:45'},
+    {t:'18:00',e:'18:20'},{t:'18:20',e:'18:40'},{t:'18:40',e:'19:00'},
+    {t:'19:15',e:'19:35'},{t:'19:35',e:'19:55'},{t:'19:55',e:'20:15'},
+    {t:'20:30',e:'20:50'},{t:'20:50',e:'21:10'}
+  ];
+  const sa=[3,6,9,12,15,18];
+  const sf=[{t:'14:00',e:'14:15'},{t:'15:15',e:'15:30'},{t:'16:30',e:'16:45'},{t:'17:45',e:'18:00'},{t:'19:00',e:'19:15'},{t:'20:15',e:'20:30'}];
+  const ps=[];for(let i=0;i<10;i++){ps.push(['A',RR5[i]]);ps.push(['B',RR5[i]]);}
+  for(let i=0;i<20;i++){const[p,[t1,t2]]=ps[i];m.push({id:i+1,pool:p,t1,t2,day:'SAT',time:st[i].t,endTime:st[i].e,type:'POOL'});}
+  m.push({id:21,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:00',endTime:'10:40',type:'SF1'});
+  m.push({id:22,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:40',endTime:'11:20',type:'SF2'});
+  m.push({id:23,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'11:20',endTime:'12:00',type:'CL9'});
+  m.push({id:24,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:15',endTime:'12:55',type:'CL7'});
+  m.push({id:25,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:55',endTime:'13:35',type:'CL5'});
+  m.push({id:26,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'13:35',endTime:'14:15',type:'PF'});
+  m.push({id:27,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'14:30',endTime:'15:10',type:'GF'});
+  return {matches:m,surfAfter:sa,surfTimes:sf};
+}
+
+function getScore(id,side){return scores[`s-${id}-${side}`]||'';}
+
+function getT1name(m){
+  if(m.type==='POOL') return m.pool==='A'?teamA[m.t1]:teamB[m.t1];
+  const cls=buildStandings();
+  if(m.type==='SF1') return cls.A[0]?.name||'1ère A';
+  if(m.type==='SF2') return cls.B[0]?.name||'1ère B';
+  if(m.type==='CL9') return cls.A[4]?.name||'5ème A';
+  if(m.type==='CL7') return cls.A[3]?.name||'4ème A';
+  if(m.type==='CL5') return cls.A[2]?.name||'3ème A';
+  if(m.type==='PF')  return getLoser(21);
+  if(m.type==='GF')  return getWinner(21);
+  return '?';
+}
+function getT2name(m){
+  if(m.type==='POOL') return m.pool==='A'?teamA[m.t2]:teamB[m.t2];
+  const cls=buildStandings();
+  if(m.type==='SF1') return cls.B[1]?.name||'2ème B';
+  if(m.type==='SF2') return cls.A[1]?.name||'2ème A';
+  if(m.type==='CL9') return cls.B[4]?.name||'5ème B';
+  if(m.type==='CL7') return cls.B[3]?.name||'4ème B';
+  if(m.type==='CL5') return cls.B[2]?.name||'3ème B';
+  if(m.type==='PF')  return getLoser(22);
+  if(m.type==='GF')  return getWinner(22);
+  return '?';
+}
+function getWinner(id){
+  const v1=getScore(id,1),v2=getScore(id,2);
+  if(!v1||v1==='') return `Gagnant M${id}`;
+  return +v1>+v2?t1name(id):(+v2>+v1?t2name(id):`${t1name(id)}/${t2name(id)}`);
+}
+function getLoser(id){
+  const v1=getScore(id,1),v2=getScore(id,2);
+  if(!v1||v1==='') return `Perdant M${id}`;
+  return +v1<+v2?t1name(id):(+v2<+v1?t2name(id):`${t1name(id)}/${t2name(id)}`);
+}
+function t1name(id){const el=document.getElementById(`p-t1-${id}`);return el?el.textContent:'?';}
+function t2name(id){const el=document.getElementById(`p-t2-${id}`);return el?el.textContent:'?';}
+
+function renderAll(){
+  const {matches,surfAfter,surfTimes}=buildMatches();
+  const satC=document.getElementById('pub-samedi');
+  const sunC=document.getElementById('pub-dimanche');
+  satC.innerHTML='';sunC.innerHTML='';
+  const satM=matches.filter(m=>m.day==='SAT');
+  const sunM=matches.filter(m=>m.day==='SUN');
+  satM.forEach((m,i)=>{
+    if(surfAfter.includes(i)){const si=surfAfter.indexOf(i);satC.appendChild(makeSurf(surfTimes[si].t,surfTimes[si].e,si+1));}
+    satC.appendChild(makeCard(m));
+  });
+  sunM.forEach((m,i)=>{
+    sunC.appendChild(makeCard(m));
+    if(i===2)sunC.appendChild(makeSurf('12:00','12:15',7));
+    if(i===5)sunC.appendChild(makeSurf('14:15','14:30',8));
+  });
+  updateStandingsDisplay();
+  const lu=document.getElementById('lastUpdate');
+  if(lu)lu.textContent='Dernière mise à jour · Last update : '+new Date().toLocaleTimeString('fr-FR');
+}
+
+function makeCard(m){
+  const v1=getScore(m.id,1),v2=getScore(m.id,2);
+  const played=v1!==''&&v2!=='';
+  const s1=+v1,s2=+v2;
+  const isPool=m.type==='POOL',isGF=m.type==='GF';
+  const cls=isPool?(m.pool==='A'?'pouleA':'pouleB'):'finale';
+  const t1n=getT1name(m),t2n=getT2name(m);
+  const bCls=isPool?(m.pool==='A'?'badge-a':'badge-b'):(isGF?'badge-f':'badge-sf');
+  const bTxt=isPool?`POULE ${m.pool}`:
+    m.type==='SF1'?'DEMI 1':m.type==='SF2'?'DEMI 2':
+    m.type==='CL9'?'CL.9-10':m.type==='CL7'?'CL.7-8':m.type==='CL5'?'CL.5-6':
+    m.type==='PF'?'P.FINALE':'FINALE';
+  const w1=played&&s1>s2,w2=played&&s2>s1;
+  const d=document.createElement('div');
+  d.className=`match-card ${cls}${played?' played':''}`;
+  d.innerHTML=`
+    <div class="match-left">
+      <div class="match-time">${m.time}</div>
+      <div class="match-time-end">${m.endTime}</div>
+      <div class="match-badge ${bCls}">${bTxt}</div>
+      ${isPool?`<div class="match-num">M${m.id}</div>`:''}
+    </div>
+    <div class="match-right">
+      <span class="team-name${w1?' winner':''}" id="p-t1-${m.id}">${t1n}</span>
+      <div class="score-display">
+        <div class="score-val${w1?' winner':''}">${played?v1:'<span class="empty">–</span>'}</div>
+        <span class="vs">VS</span>
+        <div class="score-val${w2?' winner':''}">${played?v2:'<span class="empty">–</span>'}</div>
+      </div>
+      <span class="team-name right${w2?' winner':''}" id="p-t2-${m.id}">${t2n}</span>
+    </div>`;
+  return d;
+}
+
+function makeSurf(t,e,n){
+  const d=document.createElement('div');d.className='surf-card';
+  d.innerHTML=`<span class="st">🔧 ${t}–${e}</span><span>Surfaçage #${n} · 15 min</span>`;
+  return d;
+}
+
+function buildStandings(){
+  const {matches}=buildMatches();
+  const pm=matches.filter(m=>m.type==='POOL');
+  function proc(teams,pms){
+    const s={};
+    teams.forEach(t=>s[t]={name:t,J:0,V:0,D:0,BP:0,BC:0,Pts:0});
+    pms.forEach(m=>{
+      const v1=getScore(m.id,1),v2=getScore(m.id,2);
+      if(!v1||!v2||v1===''||v2==='')return;
+      const s1=+v1,s2=+v2,t1=teams[m.t1],t2=teams[m.t2];
+      s[t1].J++;s[t2].J++;s[t1].BP+=s1;s[t1].BC+=s2;s[t2].BP+=s2;s[t2].BC+=s1;
+      if(s1>s2){s[t1].V++;s[t1].Pts+=2;s[t2].D++;}
+      else if(s2>s1){s[t2].V++;s[t2].Pts+=2;s[t1].D++;}
+      else{s[t1].Pts++;s[t2].Pts++;}
+    });
+    return Object.values(s).sort((a,b)=>b.Pts!==a.Pts?b.Pts-a.Pts:(b.BP-b.BC)!==(a.BP-a.BC)?(b.BP-b.BC)-(a.BP-a.BC):b.BP-a.BP);
+  }
+  return{A:proc(teamA,pm.filter(m=>m.pool==='A')),B:proc(teamB,pm.filter(m=>m.pool==='B'))};
+}
+
+function updateStandingsDisplay(){
+  const cls=buildStandings();
+  renderTable('pub-tableA',cls.A);renderTable('pub-tableB',cls.B);
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('p-df1',`${cls.A[0]?.name||'1ère A'} vs ${cls.B[1]?.name||'2ème B'}`);
+  set('p-df2',`${cls.B[0]?.name||'1ère B'} vs ${cls.A[1]?.name||'2ème A'}`);
+  set('p-cl9',`${cls.A[4]?.name||'5ème A'} vs ${cls.B[4]?.name||'5ème B'}`);
+  set('p-cl7',`${cls.A[3]?.name||'4ème A'} vs ${cls.B[3]?.name||'4ème B'}`);
+  set('p-cl5',`${cls.A[2]?.name||'3ème A'} vs ${cls.B[2]?.name||'3ème B'}`);
+}
+
+function renderTable(id,rows){
+  const tb=document.getElementById(id);tb.innerHTML='';
+  rows.forEach((t,i)=>{
+    const tr=document.createElement('tr');
+    if(i<2)tr.className='qualified';
+    const diff=t.BP-t.BC;
+    tr.innerHTML=`<td><span class="pn">${i+1}</span></td><td class="nc">${t.name}</td><td>${t.J}</td><td>${t.V}</td><td>${t.D}</td><td>${t.BP}</td><td>${t.BC}</td><td style="font-weight:600;color:${diff>0?'#2a6a2a':diff<0?'#8b1a1a':'var(--muted)'}">${diff>0?'+':''}${diff}</td><td><span class="pv">${t.Pts}</span></td>`;
+    tb.appendChild(tr);
+  });
+}
+
+window.showTab=function(name,btn){
+  document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  btn.classList.add('active');
+};
+
+// Listen Firebase
+onValue(ref(db,'teams'),snap=>{
+  const d=snap.val();
+  if(d){teamA=d.A||teamA;teamB=d.B||teamB;}
+  renderAll();
+});
+onValue(ref(db,'scores'),snap=>{
+  scores=snap.val()||{};
+  renderAll();
+});
+</script>
+</body>
+</html>
