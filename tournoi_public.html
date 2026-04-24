@@ -188,40 +188,58 @@ function buildMatches() {
   const sf=[{t:'14:00',e:'14:15'},{t:'15:15',e:'15:30'},{t:'16:30',e:'16:45'},{t:'17:45',e:'18:00'},{t:'19:00',e:'19:15'},{t:'20:15',e:'20:30'}];
   const ps=[];for(let i=0;i<10;i++){ps.push(['A',RR5[i]]);ps.push(['B',RR5[i]]);}
   for(let i=0;i<20;i++){const[p,[t1,t2]]=ps[i];m.push({id:i+1,pool:p,t1,t2,day:'SAT',time:st[i].t,endTime:st[i].e,type:'POOL'});}
-  m.push({id:21,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:00',endTime:'10:40',type:'SF1'});
-  m.push({id:22,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:40',endTime:'11:20',type:'SF2'});
-  m.push({id:23,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'11:20',endTime:'12:00',type:'CL9'});
-  m.push({id:24,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:15',endTime:'12:55',type:'CL7'});
-  m.push({id:25,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:55',endTime:'13:35',type:'CL5'});
-  m.push({id:26,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'13:35',endTime:'14:15',type:'PF'});
-  m.push({id:27,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'14:30',endTime:'15:10',type:'GF'});
+  // Sunday: 09:00, 10-min resurfacing between every match
+  m.push({id:21,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'09:00',endTime:'09:40',type:'SF1'});
+  m.push({id:22,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'09:50',endTime:'10:30',type:'SF2'});
+  m.push({id:23,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:40',endTime:'11:20',type:'CL9'});
+  m.push({id:24,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'11:30',endTime:'12:10',type:'CL7'});
+  m.push({id:25,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:20',endTime:'13:00',type:'CL5'});
+  m.push({id:26,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'13:10',endTime:'13:50',type:'PF'});
+  m.push({id:27,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'14:00',endTime:'14:40',type:'GF'});
   return {matches:m,surfAfter:sa,surfTimes:sf};
 }
 
 function getScore(id,side){return scores[`s-${id}-${side}`]||'';}
 
+function poolsComplete() {
+  for(let i=1;i<=20;i++){
+    const v1=getScore(i,1), v2=getScore(i,2);
+    if(v1===''||v2==='') return false;
+  }
+  return true;
+}
+function matchComplete(id) {
+  return getScore(id,1)!=='' && getScore(id,2)!=='';
+}
+
 function getT1name(m){
   if(m.type==='POOL') return m.pool==='A'?teamA[m.t1]:teamB[m.t1];
-  const cls=buildStandings();
-  if(m.type==='SF1') return cls.A[0]?.name||'1ère A';
-  if(m.type==='SF2') return cls.B[0]?.name||'1ère B';
-  if(m.type==='CL9') return cls.A[4]?.name||'5ème A';
-  if(m.type==='CL7') return cls.A[3]?.name||'4ème A';
-  if(m.type==='CL5') return cls.A[2]?.name||'3ème A';
-  if(m.type==='PF')  return getLoser(21);
-  if(m.type==='GF')  return getWinner(21);
+  if(['SF1','SF2','CL9','CL7','CL5'].includes(m.type)){
+    if(!poolsComplete()) return 'À déterminer';
+    const cls=buildStandings();
+    if(m.type==='SF1') return cls.A[0]?.name||'?';
+    if(m.type==='SF2') return cls.B[0]?.name||'?';
+    if(m.type==='CL9') return cls.A[4]?.name||'?';
+    if(m.type==='CL7') return cls.A[3]?.name||'?';
+    if(m.type==='CL5') return cls.A[2]?.name||'?';
+  }
+  if(m.type==='PF'){ if(!matchComplete(21)||!matchComplete(22)) return 'À déterminer'; return getLoser(21); }
+  if(m.type==='GF'){ if(!matchComplete(21)||!matchComplete(22)) return 'À déterminer'; return getWinner(21); }
   return '?';
 }
 function getT2name(m){
   if(m.type==='POOL') return m.pool==='A'?teamA[m.t2]:teamB[m.t2];
-  const cls=buildStandings();
-  if(m.type==='SF1') return cls.B[1]?.name||'2ème B';
-  if(m.type==='SF2') return cls.A[1]?.name||'2ème A';
-  if(m.type==='CL9') return cls.B[4]?.name||'5ème B';
-  if(m.type==='CL7') return cls.B[3]?.name||'4ème B';
-  if(m.type==='CL5') return cls.B[2]?.name||'3ème B';
-  if(m.type==='PF')  return getLoser(22);
-  if(m.type==='GF')  return getWinner(22);
+  if(['SF1','SF2','CL9','CL7','CL5'].includes(m.type)){
+    if(!poolsComplete()) return 'À déterminer';
+    const cls=buildStandings();
+    if(m.type==='SF1') return cls.B[1]?.name||'?';
+    if(m.type==='SF2') return cls.A[1]?.name||'?';
+    if(m.type==='CL9') return cls.B[4]?.name||'?';
+    if(m.type==='CL7') return cls.B[3]?.name||'?';
+    if(m.type==='CL5') return cls.B[2]?.name||'?';
+  }
+  if(m.type==='PF'){ if(!matchComplete(21)||!matchComplete(22)) return 'À déterminer'; return getLoser(22); }
+  if(m.type==='GF'){ if(!matchComplete(21)||!matchComplete(22)) return 'À déterminer'; return getWinner(22); }
   return '?';
 }
 function getWinner(id){
@@ -250,8 +268,12 @@ function renderAll(){
   });
   sunM.forEach((m,i)=>{
     sunC.appendChild(makeCard(m));
-    if(i===2)sunC.appendChild(makeSurf('12:00','12:15',7));
-    if(i===5)sunC.appendChild(makeSurf('14:15','14:30',8));
+    if(i===0) sunC.appendChild(makeSurf('09:40','09:50',7));
+    if(i===1) sunC.appendChild(makeSurf('10:30','10:40',8));
+    if(i===2) sunC.appendChild(makeSurf('11:20','11:30',9));
+    if(i===3) sunC.appendChild(makeSurf('12:10','12:20',10));
+    if(i===4) sunC.appendChild(makeSurf('13:00','13:10',11));
+    if(i===5) sunC.appendChild(makeSurf('13:50','14:00',12));
   });
   updateStandingsDisplay();
   const lu=document.getElementById('lastUpdate');
@@ -322,11 +344,16 @@ function updateStandingsDisplay(){
   const cls=buildStandings();
   renderTable('pub-tableA',cls.A);renderTable('pub-tableB',cls.B);
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-  set('p-df1',`${cls.A[0]?.name||'1ère A'} vs ${cls.B[1]?.name||'2ème B'}`);
-  set('p-df2',`${cls.B[0]?.name||'1ère B'} vs ${cls.A[1]?.name||'2ème A'}`);
-  set('p-cl9',`${cls.A[4]?.name||'5ème A'} vs ${cls.B[4]?.name||'5ème B'}`);
-  set('p-cl7',`${cls.A[3]?.name||'4ème A'} vs ${cls.B[3]?.name||'4ème B'}`);
-  set('p-cl5',`${cls.A[2]?.name||'3ème A'} vs ${cls.B[2]?.name||'3ème B'}`);
+  if(poolsComplete()){
+    set('p-df1',`${cls.A[0]?.name||'?'} vs ${cls.B[1]?.name||'?'}`);
+    set('p-df2',`${cls.B[0]?.name||'?'} vs ${cls.A[1]?.name||'?'}`);
+    set('p-cl9',`${cls.A[4]?.name||'?'} vs ${cls.B[4]?.name||'?'}`);
+    set('p-cl7',`${cls.A[3]?.name||'?'} vs ${cls.B[3]?.name||'?'}`);
+    set('p-cl5',`${cls.A[2]?.name||'?'} vs ${cls.B[2]?.name||'?'}`);
+  } else {
+    set('p-df1','— Résultats de poule en attente —');
+    set('p-df2','—'); set('p-cl9','—'); set('p-cl7','—'); set('p-cl5','—');
+  }
 }
 
 function renderTable(id,rows){

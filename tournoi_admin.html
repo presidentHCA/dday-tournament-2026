@@ -317,13 +317,14 @@ function buildMatchData() {
     const [pool,[t1,t2]] = poolSeq[i];
     matches.push({id:i+1,pool,t1,t2,day:'SAT',time:satTimes[i].t,endTime:satTimes[i].e,type:'POOL'});
   }
-  matches.push({id:21,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:00',endTime:'10:40',type:'SF1',label:'Demi-Finale 1 · Semi-final 1'});
-  matches.push({id:22,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:40',endTime:'11:20',type:'SF2',label:'Demi-Finale 2 · Semi-final 2'});
-  matches.push({id:23,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'11:20',endTime:'12:00',type:'CL9',label:'Classement 9-10 · 9th-10th Place'});
-  matches.push({id:24,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:15',endTime:'12:55',type:'CL7',label:'Classement 7-8 · 7th-8th Place'});
-  matches.push({id:25,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:55',endTime:'13:35',type:'CL5',label:'Classement 5-6 · 5th-6th Place'});
-  matches.push({id:26,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'13:35',endTime:'14:15',type:'PF',label:'Petite Finale · 3rd-4th Place'});
-  matches.push({id:27,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'14:30',endTime:'15:10',type:'GF',label:'🥇 Grande Finale · Championship'});
+  // Sunday: 09:00, 10-min resurfacing between every match
+  matches.push({id:21,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'09:00',endTime:'09:40',type:'SF1',label:'Demi-Finale 1 · Semi-final 1'});
+  matches.push({id:22,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'09:50',endTime:'10:30',type:'SF2',label:'Demi-Finale 2 · Semi-final 2'});
+  matches.push({id:23,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:40',endTime:'11:20',type:'CL9',label:'Classement 9-10 · 9th-10th Place'});
+  matches.push({id:24,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'11:30',endTime:'12:10',type:'CL7',label:'Classement 7-8 · 7th-8th Place'});
+  matches.push({id:25,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:20',endTime:'13:00',type:'CL5',label:'Classement 5-6 · 5th-6th Place'});
+  matches.push({id:26,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'13:10',endTime:'13:50',type:'PF',label:'Petite Finale · 3rd-4th Place'});
+  matches.push({id:27,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'14:00',endTime:'14:40',type:'GF',label:'🥇 Grande Finale · Championship'});
   return {matches,surfTimes,surfAfter};
 }
 
@@ -393,9 +394,13 @@ function renderMatches() {
     satC.appendChild(makeCard(m));
   });
   sunM.forEach((m,idx) => {
-    sunC.appendChild(makeCard(m));
-    if(idx===2) sunC.appendChild(makeSurf('12:00','12:15',7));
-    if(idx===5) sunC.appendChild(makeSurf('14:15','14:30',8));
+    sunContainer.appendChild(makeCard(m));
+    if(idx===0) sunContainer.appendChild(makeSurf('09:40','09:50',7));
+    if(idx===1) sunContainer.appendChild(makeSurf('10:30','10:40',8));
+    if(idx===2) sunContainer.appendChild(makeSurf('11:20','11:30',9));
+    if(idx===3) sunContainer.appendChild(makeSurf('12:10','12:20',10));
+    if(idx===4) sunContainer.appendChild(makeSurf('13:00','13:10',11));
+    if(idx===5) sunContainer.appendChild(makeSurf('13:50','14:00',12));
   });
 }
 
@@ -437,15 +442,42 @@ function makeSurf(t,e,n,extra=''){
 }
 
 // ── FINALE NAMES ────────────────────────────────────────────
+// Returns true if all 20 pool matches have scores
+function poolsComplete() {
+  for(let i=1;i<=20;i++){
+    const v1=document.getElementById(`s-${i}-1`)?.value;
+    const v2=document.getElementById(`s-${i}-2`)?.value;
+    if(!v1&&v1!=='0'||!v2&&v2!=='0') return false;
+    if(v1===''||v2==='') return false;
+  }
+  return true;
+}
+function matchComplete(id) {
+  const v1=document.getElementById(`s-${id}-1`)?.value;
+  const v2=document.getElementById(`s-${id}-2`)?.value;
+  return v1!==undefined && v2!==undefined && v1!=='' && v2!=='';
+}
+
 function getFinName(m,side) {
-  const cls = buildStandings();
-  if(m.type==='SF1') return side==='t1'?(cls.A[0]?.name||'1ère A'):(cls.B[1]?.name||'2ème B');
-  if(m.type==='SF2') return side==='t1'?(cls.B[0]?.name||'1ère B'):(cls.A[1]?.name||'2ème A');
-  if(m.type==='CL9') return side==='t1'?(cls.A[4]?.name||'5ème A'):(cls.B[4]?.name||'5ème B');
-  if(m.type==='CL7') return side==='t1'?(cls.A[3]?.name||'4ème A'):(cls.B[3]?.name||'4ème B');
-  if(m.type==='CL5') return side==='t1'?(cls.A[2]?.name||'3ème A'):(cls.B[2]?.name||'3ème B');
-  if(m.type==='PF')  return side==='t1'?getLoser(21):getLoser(22);
-  if(m.type==='GF')  return side==='t1'?getWinner(21):getWinner(22);
+  // SF, CL: only show teams once all pool matches are done
+  if(['SF1','SF2','CL9','CL7','CL5'].includes(m.type)) {
+    if(!poolsComplete()) return 'À déterminer';
+    const cls = buildStandings();
+    if(m.type==='SF1') return side==='t1'?(cls.A[0]?.name||'?'):(cls.B[1]?.name||'?');
+    if(m.type==='SF2') return side==='t1'?(cls.B[0]?.name||'?'):(cls.A[1]?.name||'?');
+    if(m.type==='CL9') return side==='t1'?(cls.A[4]?.name||'?'):(cls.B[4]?.name||'?');
+    if(m.type==='CL7') return side==='t1'?(cls.A[3]?.name||'?'):(cls.B[3]?.name||'?');
+    if(m.type==='CL5') return side==='t1'?(cls.A[2]?.name||'?'):(cls.B[2]?.name||'?');
+  }
+  // PF/GF: only show once both semis are played
+  if(m.type==='PF') {
+    if(!matchComplete(21)||!matchComplete(22)) return 'À déterminer';
+    return side==='t1'?getLoser(21):getLoser(22);
+  }
+  if(m.type==='GF') {
+    if(!matchComplete(21)||!matchComplete(22)) return 'À déterminer';
+    return side==='t1'?getWinner(21):getWinner(22);
+  }
   return '?';
 }
 function getWinner(id){
@@ -491,11 +523,19 @@ function updateStandingsUI() {
   const cls = buildStandings();
   renderTable('tableA',cls.A); renderTable('tableB',cls.B);
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-  set('qual-df1',`${cls.A[0]?.name||'1ère A'} vs ${cls.B[1]?.name||'2ème B'}`);
-  set('qual-df2',`${cls.B[0]?.name||'1ère B'} vs ${cls.A[1]?.name||'2ème A'}`);
-  set('qual-cl9',`${cls.A[4]?.name||'5ème A'} vs ${cls.B[4]?.name||'5ème B'}`);
-  set('qual-cl7',`${cls.A[3]?.name||'4ème A'} vs ${cls.B[3]?.name||'4ème B'}`);
-  set('qual-cl5',`${cls.A[2]?.name||'3ème A'} vs ${cls.B[2]?.name||'3ème B'}`);
+  if(poolsComplete()){
+    set('qual-df1',`${cls.A[0]?.name||'?'} vs ${cls.B[1]?.name||'?'}`);
+    set('qual-df2',`${cls.B[0]?.name||'?'} vs ${cls.A[1]?.name||'?'}`);
+    set('qual-cl9',`${cls.A[4]?.name||'?'} vs ${cls.B[4]?.name||'?'}`);
+    set('qual-cl7',`${cls.A[3]?.name||'?'} vs ${cls.B[3]?.name||'?'}`);
+    set('qual-cl5',`${cls.A[2]?.name||'?'} vs ${cls.B[2]?.name||'?'}`);
+  } else {
+    set('qual-df1','— Résultats de poule en attente —');
+    set('qual-df2','—');
+    set('qual-cl9','—');
+    set('qual-cl7','—');
+    set('qual-cl5','—');
+  }
   updateFinaleNames();
 }
 window.updateStandings = updateStandingsUI;
