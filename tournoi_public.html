@@ -375,9 +375,13 @@ window.showTab=function(name,btn){
 };
 
 // Listen Firebase
+// Render schedule immediately with defaults before Firebase responds
+renderAll();
+
 onValue(ref(db,'teams'),snap=>{
   const d=snap.val();
-  if(d){teamA=d.A||teamA;teamB=d.B||teamB;}
+  if(d){teamA=d.A||[...DEFAULT_A];teamB=d.B||[...DEFAULT_B];}
+  else{teamA=[...DEFAULT_A];teamB=[...DEFAULT_B];}
   renderAll();
 });
 onValue(ref(db,'scores'),snap=>{

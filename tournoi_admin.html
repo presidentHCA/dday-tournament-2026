@@ -354,12 +354,16 @@ function listenFirebase() {
   onValue(ref(db,'teams'), snap => {
     const data = snap.val();
     if (data) {
-      teamA = data.A || teamA;
-      teamB = data.B || teamB;
-      renderTeamInputs();
-      updateMatchTeamNames();
-      updateStandingsUI();
+      teamA = data.A || [...DEFAULT_A];
+      teamB = data.B || [...DEFAULT_B];
+    } else {
+      // No teams in Firebase yet — use defaults
+      teamA = [...DEFAULT_A];
+      teamB = [...DEFAULT_B];
     }
+    renderTeamInputs();
+    updateMatchTeamNames();
+    updateStandingsUI();
   });
 }
 
@@ -633,6 +637,9 @@ setInterval(()=>{
 
 // ── INIT ─────────────────────────────────────────────────────
 function initApp(){
+  // Render schedule immediately with defaults - don't wait for Firebase
+  teamA = [...DEFAULT_A];
+  teamB = [...DEFAULT_B];
   renderMatches();
   renderTeamInputs();
   listenFirebase();
