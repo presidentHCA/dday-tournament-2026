@@ -186,7 +186,7 @@ tr.qualified .pos-num{color:var(--gold2);}
   <div id="dimanche" class="tab-content">
     <div class="section-day">
       <div><h2>DIMANCHE 7 JUIN · SUNDAY, JUNE 7</h2><div class="en">Phases finales · Finals</div></div>
-      <div class="time-range">10h00 – 15h10</div>
+      <div class="time-range">09h00 – 15h10</div>
     </div>
     <div class="match-grid" id="matchGrid-dimanche"></div>
     <div class="prog-note">Matchs de phases finales : 2×20 min · Classements calculés fin de soirée samedi<br><em>Finals: 2×20 min each · Standings calculated Saturday evening</em></div>
@@ -317,14 +317,14 @@ function buildMatchData() {
     const [pool,[t1,t2]] = poolSeq[i];
     matches.push({id:i+1,pool,t1,t2,day:'SAT',time:satTimes[i].t,endTime:satTimes[i].e,type:'POOL'});
   }
-  // Sunday: 09:00, 10-min resurfacing between every match
+  // Sunday: 09:00 start, 15-min resurfacing between every match
   matches.push({id:21,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'09:00',endTime:'09:40',type:'SF1',label:'Demi-Finale 1 · Semi-final 1'});
-  matches.push({id:22,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'09:50',endTime:'10:30',type:'SF2',label:'Demi-Finale 2 · Semi-final 2'});
-  matches.push({id:23,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:40',endTime:'11:20',type:'CL9',label:'Classement 9-10 · 9th-10th Place'});
-  matches.push({id:24,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'11:30',endTime:'12:10',type:'CL7',label:'Classement 7-8 · 7th-8th Place'});
-  matches.push({id:25,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:20',endTime:'13:00',type:'CL5',label:'Classement 5-6 · 5th-6th Place'});
-  matches.push({id:26,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'13:10',endTime:'13:50',type:'PF',label:'Petite Finale · 3rd-4th Place'});
-  matches.push({id:27,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'14:00',endTime:'14:40',type:'GF',label:'🥇 Grande Finale · Championship'});
+  matches.push({id:22,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'09:55',endTime:'10:35',type:'SF2',label:'Demi-Finale 2 · Semi-final 2'});
+  matches.push({id:23,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'10:50',endTime:'11:30',type:'CL9',label:'Classement 9-10 · 9th-10th Place'});
+  matches.push({id:24,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'11:45',endTime:'12:25',type:'CL7',label:'Classement 7-8 · 7th-8th Place'});
+  matches.push({id:25,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'12:40',endTime:'13:20',type:'CL5',label:'Classement 5-6 · 5th-6th Place'});
+  matches.push({id:26,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'13:35',endTime:'14:15',type:'PF',label:'Petite Finale · 3rd-4th Place'});
+  matches.push({id:27,pool:'FIN',t1:-1,t2:-1,day:'SUN',time:'14:30',endTime:'15:10',type:'GF',label:'🥇 Grande Finale · Championship'});
   return {matches,surfTimes,surfAfter};
 }
 
@@ -398,13 +398,13 @@ function renderMatches() {
     satC.appendChild(makeCard(m));
   });
   sunM.forEach((m,idx) => {
-    sunContainer.appendChild(makeCard(m));
-    if(idx===0) sunContainer.appendChild(makeSurf('09:40','09:50',7));
-    if(idx===1) sunContainer.appendChild(makeSurf('10:30','10:40',8));
-    if(idx===2) sunContainer.appendChild(makeSurf('11:20','11:30',9));
-    if(idx===3) sunContainer.appendChild(makeSurf('12:10','12:20',10));
-    if(idx===4) sunContainer.appendChild(makeSurf('13:00','13:10',11));
-    if(idx===5) sunContainer.appendChild(makeSurf('13:50','14:00',12));
+    sunC.appendChild(makeCard(m));
+    if(idx===0) sunC.appendChild(makeSurf('09:40','09:55',7,15));
+    if(idx===1) sunC.appendChild(makeSurf('10:35','10:50',8,15));
+    if(idx===2) sunC.appendChild(makeSurf('11:30','11:45',9,15));
+    if(idx===3) sunC.appendChild(makeSurf('12:25','12:40',10,15));
+    if(idx===4) sunC.appendChild(makeSurf('13:20','13:35',11,15));
+    if(idx===5) sunC.appendChild(makeSurf('14:15','14:30',12,15));
   });
 }
 
@@ -439,9 +439,9 @@ function makeCard(m) {
   return d;
 }
 
-function makeSurf(t,e,n,extra=''){
+function makeSurf(t,e,n,dur=15){
   const d=document.createElement('div'); d.className='surf-card';
-  d.innerHTML=`<span class="surf-time">🔧 ${t}–${e}</span><span>Surfaçage #${n} · Ice resurfacing (15 min) ${extra}</span>`;
+  d.innerHTML=`<span class="surf-time">🔧 ${t}–${e}</span><span>Surfaçage #${n} · Ice resurfacing (${dur} min)</span>`;
   return d;
 }
 
