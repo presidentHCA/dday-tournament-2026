@@ -288,12 +288,13 @@ function setSyncStatus(state, msg) {
 }
 
 // ── DATA ────────────────────────────────────────────────────
-const DEFAULT_A = ["Frères d'Armes","UK Armed Forces","Drakkars de Caen","US Army Team","Les Sentinelles"];
-const DEFAULT_B = ["Bayern Rangers","Warrior for Life","Équipe NATO","Pompiers de Paris","Canadian Forces"];
+const DEFAULT_A = ["Frères d'Armes - Confirmés","North Stars NATO","Drakkars de Caen","Wiesbaden Vikings","Les Sentinelles"];
+const DEFAULT_B = ["Bayern Rangers","Warrior For Life Fund","Shape Shield","Bruleurs de Glace","Frères d'Armes - Débutants"];
 let teamA = [...DEFAULT_A];
 let teamB = [...DEFAULT_B];
 
 const RR5 = [[0,1],[2,3],[0,2],[1,4],[3,4],[0,3],[1,2],[2,4],[0,4],[1,3]];
+  const RR5_B = [[0,1],[2,3],[0,2],[1,4],[1,2],[1,3],[3,4],[2,4],[0,4],[0,3]];
 
 function buildMatchData() {
   const matches = [];
@@ -312,7 +313,7 @@ function buildMatchData() {
     {t:'17:45',e:'18:00'},{t:'19:00',e:'19:15'},{t:'20:15',e:'20:30'}
   ];
   const poolSeq = [];
-  for (let i=0;i<10;i++){poolSeq.push(['A',RR5[i]]);poolSeq.push(['B',RR5[i]]);}
+  for (let i=0;i<10;i++){poolSeq.push(['A',RR5[i]]);poolSeq.push(['B',RR5_B[i]]);}
   for (let i=0;i<20;i++){
     const [pool,[t1,t2]] = poolSeq[i];
     matches.push({id:i+1,pool,t1,t2,day:'SAT',time:satTimes[i].t,endTime:satTimes[i].e,type:'POOL'});

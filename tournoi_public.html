@@ -164,12 +164,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const DEFAULT_A = ["Frères d'Armes","UK Armed Forces","Drakkars de Caen","US Army Team","Les Sentinelles"];
-const DEFAULT_B = ["Bayern Rangers","Warrior for Life","Équipe NATO","Pompiers de Paris","Canadian Forces"];
+const DEFAULT_A = ["Frères d'Armes - Confirmés","North Stars NATO","Drakkars de Caen","Wiesbaden Vikings","Les Sentinelles"];
+const DEFAULT_B = ["Bayern Rangers","Warrior For Life Fund","Shape Shield","Bruleurs de Glace","Frères d'Armes - Débutants"];
 let teamA=[...DEFAULT_A], teamB=[...DEFAULT_B];
 let scores = {};
 
 const RR5=[[0,1],[2,3],[0,2],[1,4],[3,4],[0,3],[1,2],[2,4],[0,4],[1,3]];
+const RR5_B=[[0,1],[2,3],[0,2],[1,4],[1,2],[1,3],[3,4],[2,4],[0,4],[0,3]];
 
 function buildMatches() {
   const m=[];
@@ -188,7 +189,7 @@ function buildMatches() {
     {t:'17:45',e:'18:00'},{t:'19:00',e:'19:15'},{t:'20:15',e:'20:30'}
   ];
   const ps=[];
-  for(let i=0;i<10;i++){ps.push(['A',RR5[i]]);ps.push(['B',RR5[i]]);}
+  for(let i=0;i<10;i++){ps.push(['A',RR5[i]]);ps.push(['B',RR5_B[i]]);}
   for(let i=0;i<20;i++){
     const[p,[t1,t2]]=ps[i];
     m.push({id:i+1,pool:p,t1,t2,day:'SAT',time:st[i].t,endTime:st[i].e,type:'POOL'});
