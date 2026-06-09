@@ -87,6 +87,27 @@ tr.qualified .pn{color:var(--gold2);}
 .qt{color:var(--text);font-weight:600;}
 .last-update{text-align:center;font-size:0.7em;color:var(--muted);margin-top:12px;padding:8px;font-style:italic;}
 
+/* CLASSEMENT FINAL */
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0;}
+.podium-cell{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 10px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.07);}
+.podium-cell.gold{background:#fffbe8;border-color:#c8963c;border-top:4px solid #c8a020;}
+.podium-cell.silver{background:#f8f8f8;border-top:4px solid #a0a8b0;}
+.podium-cell.bronze{background:#fdf6f0;border-top:4px solid #b87333;}
+.podium-medal{font-size:2em;line-height:1.2;}
+.podium-rank{font-family:'Oswald',sans-serif;font-size:2em;font-weight:700;line-height:1;}
+.podium-rank.gold{color:#c8a020;}
+.podium-rank.silver{color:#a0a8b0;}
+.podium-rank.bronze{color:#b87333;}
+.podium-label{font-size:0.72em;color:var(--muted);font-style:italic;margin-bottom:8px;}
+.podium-team{font-family:'Oswald',sans-serif;font-size:1em;font-weight:600;color:var(--navy);min-height:24px;border-bottom:2px solid var(--border);padding-bottom:4px;margin-top:6px;}
+.rank-list{display:flex;flex-direction:column;gap:5px;margin-top:10px;}
+.rank-row{display:grid;grid-template-columns:44px 1fr;background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.04);}
+.rank-num{background:var(--parchment);padding:8px 4px;text-align:center;border-right:1px solid var(--border);font-family:'Oswald',sans-serif;font-size:1.2em;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;}
+.rank-info{padding:8px 12px;display:flex;align-items:center;justify-content:space-between;}
+.rank-name{font-weight:600;font-size:0.88em;color:var(--text);}
+.rank-from{font-size:0.72em;color:var(--muted);font-style:italic;}
+.final-note{font-size:0.72em;color:var(--muted);text-align:center;font-style:italic;margin-top:12px;padding:8px;background:var(--parchment);border-radius:5px;}
+
 @media(max-width:600px){
   .pools-grid{grid-template-columns:1fr;}
   .match-card{grid-template-columns:76px 1fr;}
@@ -106,6 +127,7 @@ tr.qualified .pn{color:var(--gold2);}
   <button class="tab-btn active" onclick="showTab('samedi',this)">Samedi 6 Juin</button>
   <button class="tab-btn" onclick="showTab('dimanche',this)">Dimanche 7 Juin</button>
   <button class="tab-btn" onclick="showTab('classements',this)">📊 Classements</button>
+  <button class="tab-btn" onclick="showTab('classement-final',this)">🏆 Classement Final</button>
 </div>
 
 <div id="samedi" class="tab-content active">
@@ -145,6 +167,49 @@ tr.qualified .pn{color:var(--gold2);}
     <div class="qual-row"><div class="ql">CL. 5-6</div><div class="qt" id="p-cl5">—</div></div>
   </div>
   <div class="last-update" id="lastUpdate"></div>
+</div>
+
+<div id="classement-final" class="tab-content">
+  <div class="section-day" style="margin-bottom:14px">
+    <div><h2>CLASSEMENT FINAL · FINAL STANDINGS</h2><div class="sub">Mis à jour automatiquement · Updated automatically</div></div>
+  </div>
+
+  <!-- PODIUM -->
+  <div class="podium">
+    <div class="podium-cell silver">
+      <div class="podium-medal">🥈</div>
+      <div class="podium-rank silver">2</div>
+      <div class="podium-label">2ème · 2nd Place</div>
+      <div class="podium-team" id="cf-rank2">—</div>
+    </div>
+    <div class="podium-cell gold">
+      <div class="podium-medal">🥇</div>
+      <div class="podium-rank gold">1</div>
+      <div class="podium-label">1ère · 1st Place</div>
+      <div class="podium-team" id="cf-rank1">—</div>
+    </div>
+    <div class="podium-cell bronze">
+      <div class="podium-medal">🥉</div>
+      <div class="podium-rank bronze">3</div>
+      <div class="podium-label">3ème · 3rd Place</div>
+      <div class="podium-team" id="cf-rank3">—</div>
+    </div>
+  </div>
+
+  <!-- PLACES 4-10 -->
+  <div class="rank-list">
+    <div class="rank-row"><div class="rank-num">4</div><div class="rank-info"><span class="rank-name" id="cf-rank4">—</span><span class="rank-from">Petite Finale</span></div></div>
+    <div class="rank-row"><div class="rank-num">5</div><div class="rank-info"><span class="rank-name" id="cf-rank5">—</span><span class="rank-from">Classement 5-6</span></div></div>
+    <div class="rank-row"><div class="rank-num">6</div><div class="rank-info"><span class="rank-name" id="cf-rank6">—</span><span class="rank-from">Classement 5-6</span></div></div>
+    <div class="rank-row"><div class="rank-num">7</div><div class="rank-info"><span class="rank-name" id="cf-rank7">—</span><span class="rank-from">Classement 7-8</span></div></div>
+    <div class="rank-row"><div class="rank-num">8</div><div class="rank-info"><span class="rank-name" id="cf-rank8">—</span><span class="rank-from">Classement 7-8</span></div></div>
+    <div class="rank-row"><div class="rank-num">9</div><div class="rank-info"><span class="rank-name" id="cf-rank9">—</span><span class="rank-from">Classement 9-10</span></div></div>
+    <div class="rank-row"><div class="rank-num">10</div><div class="rank-info"><span class="rank-name" id="cf-rank10">—</span><span class="rank-from">Classement 9-10</span></div></div>
+  </div>
+
+  <div class="final-note" id="cf-note">
+    Le classement final sera disponible après la Grande Finale · Final standings will be available after the Championship match
+  </div>
 </div>
 
 <script type="module">
@@ -290,6 +355,7 @@ function renderAll(){
   updateStandingsDisplay();
   const lu=document.getElementById('lastUpdate');
   if(lu) lu.textContent='Dernière mise à jour · Last update : '+new Date().toLocaleTimeString('fr-FR');
+  updateFinalStandings();
 }
 
 function makeCard(m){
@@ -386,6 +452,50 @@ window.showTab=function(name,btn){
   document.getElementById(name).classList.add('active');
   btn.classList.add('active');
 };
+
+// Final standings updater
+function updateFinalStandings() {
+  function res(id) {
+    const v1 = getScore(id,1), v2 = getScore(id,2);
+    if(v1===''||v2==='') return null;
+    const n1 = document.getElementById(`p-t1-${id}`)?.textContent||'?';
+    const n2 = document.getElementById(`p-t2-${id}`)?.textContent||'?';
+    return {w: +v1>+v2?n1:n2, l: +v1<+v2?n1:n2, draw: +v1===+v2};
+  }
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v||'—'; };
+
+  // GF (id 27): winner=1st, loser=2nd
+  const gf = res(27);
+  if(gf && !gf.draw) { set('cf-rank1', gf.w); set('cf-rank2', gf.l); }
+
+  // PF (id 26): winner=3rd, loser=4th
+  const pf = res(26);
+  if(pf && !pf.draw) { set('cf-rank3', pf.w); set('cf-rank4', pf.l); }
+
+  // CL5-6 (id 25): winner=5th, loser=6th
+  const cl5 = res(25);
+  if(cl5 && !cl5.draw) { set('cf-rank5', cl5.w); set('cf-rank6', cl5.l); }
+
+  // CL7-8 (id 24): winner=7th, loser=8th
+  const cl7 = res(24);
+  if(cl7 && !cl7.draw) { set('cf-rank7', cl7.w); set('cf-rank8', cl7.l); }
+
+  // CL9-10 (id 23): winner=9th, loser=10th
+  const cl9 = res(23);
+  if(cl9 && !cl9.draw) { set('cf-rank9', cl9.w); set('cf-rank10', cl9.l); }
+
+  // Update note
+  const note = document.getElementById('cf-note');
+  if(note) {
+    if(gf && !gf.draw) {
+      note.textContent = 'Classement final officiel · Official final standings';
+      note.style.color = 'var(--gold)';
+      note.style.fontWeight = '600';
+    } else {
+      note.textContent = 'Le classement final sera disponible après la Grande Finale · Final standings will be available after the Championship match';
+    }
+  }
+}
 
 // Render immediately with defaults
 renderAll();
